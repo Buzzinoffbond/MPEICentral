@@ -81,7 +81,7 @@ if (isset($_SERVER['KOHANA_ENV']))
  * Cookie
  */
 // Set the magic salt to add to a cookie
-Cookie::$salt = '/*magic salt here*/';
+Cookie::$salt = 'lfutndpvmrzascvmtpfkyuewsogynfh';
 // Set the number of seconds before a cookie expires
 Cookie::$expiration = Date::WEEK*4; // by default until the browser close
 // Restrict the path that the cookie is available to

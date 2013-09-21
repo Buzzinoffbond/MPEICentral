@@ -3,7 +3,7 @@
 class Model_Articles extends Model
 {
     protected $_tableArticles = 'articles';
- 
+    protected $_tableProposedArticles = 'proposed_articles';
     /**
      * Get all articles
      * @return array
@@ -15,24 +15,31 @@ class Model_Articles extends Model
         return DB::query(Database::SELECT, $sql)
                    ->execute();
     }
-    public function get_article_by_id($id = '')
+    public function get_article_by_id($id,$table = NULL)
     {
-        $query = DB::select('title','url_title','articles.id', 'date','content','content_short','username','kdpv','kdpv_description')
-                ->from($this->_tableArticles)
+        if (empty($table))
+        {
+            $table = $this->_tableArticles;
+        }
+        $query = DB::select($table.'.*','username')
+                ->from($table)
                 ->join('users')
-                ->where($this->_tableArticles.'.id', '=', $id)
-                ->on($this->_tableArticles.'.author_id', '=','users.id' )
+                ->where($table.'.id', '=', $id)
+                ->on($table.'.author_id', '=','users.id' )
                 ->execute()
-                ->as_array(); 
-
+                ->as_array();
         if($query)
             return $query[0];
         else
             return FALSE;
     }
-    public function count_all()
+    public function count_all($table = NULL)
     {
-        $query = DB::query(Database::SELECT, 'SELECT COUNT(*) AS "total_items" FROM '.$this->_tableArticles)
+        if (empty($table))
+        {
+            $table = $this->_tableArticles;
+        }
+        $query = DB::query(Database::SELECT, 'SELECT COUNT(*) AS "total_items" FROM '.$table)
             ->execute()
             ->get('total_items', 0);
 
@@ -42,12 +49,16 @@ class Model_Articles extends Model
         else
             return FALSE;
     }
-    public function get_page($start,$nums)
+    public function get_page($start,$nums,$table = NULL)
     {
-        $query = DB::select($this->_tableArticles.'.*','username')
-                ->from($this->_tableArticles)
+        if (empty($table))
+        {
+            $table = $this->_tableArticles;
+        }
+        $query = DB::select($table.'.*','username')
+                ->from($table)
                 ->join('users')
-                ->on($this->_tableArticles.'.author_id', '=','users.id' )
+                ->on($table.'.author_id', '=','users.id' )
                 ->order_by('id','DESC')
                 ->limit((int)$nums)
                 ->offset((int)$start)
@@ -95,15 +106,19 @@ class Model_Articles extends Model
             $this->set_kdpv($query[0], $kdpv);
         }
     }
-    public function delete($id)
+    public function delete($id,$table = NULL)
     {
+        if (empty($table))
+        {
+            $table = $this->_tableArticles;
+        }
         $title = DB::select('title')
-                ->from($this->_tableArticles)
-                ->where($this->_tableArticles.'.id', '=', (int)$id)
+                ->from($table)
+                ->where($table.'.id', '=', (int)$id)
                 ->execute()
                 ->get('title', 0);
 
-        $query = DB::delete($this->_tableArticles)
+        $query = DB::delete($table)
                 ->where('id', '=', (int)$id)
                 ->execute();
         return $title;
@@ -168,6 +183,31 @@ class Model_Articles extends Model
         else 
         { 
             return FALSE;
+        }
+    }
+
+    /**
+    *   Propose an article
+    */
+    public function propose_an_article($title,$content,$author_id){
+        if (!empty($title) AND !empty($content))
+        {
+            $query = DB::insert($this->_tableProposedArticles, array('title','content','author_id'))
+                ->values(array(
+                    $title,
+                    $content,
+                    $author_id))
+                ->execute();
+            if ($query)
+                return TRUE;
+            else
+            {
+                throw new Exception('Произошла ошибка');
+            }
+        }
+        else
+        {
+            throw new Exception('Название или текст статьи не могут быть пустыми');
         }
     }
 }

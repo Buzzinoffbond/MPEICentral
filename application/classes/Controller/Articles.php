@@ -6,7 +6,7 @@ class Controller_Articles extends Controller_Common {
     {
         $articles = array();
         
-        $content = View::factory('articles')
+        $content = View::factory('articles/articles')
                 ->bind('articles', $articles)
                 ->bind('pagination', $pagination);
         $total_items = Model::factory('Articles')->count_all();
@@ -31,7 +31,7 @@ class Controller_Articles extends Controller_Common {
     {
         $id = $this->request->param('id');
  
-        $content = View::factory('article')
+        $content = View::factory('articles/article')
                         ->bind('article', $article)
                         ->bind('table', $table)
                         ->bind('comments', $comments);
@@ -43,5 +43,36 @@ class Controller_Articles extends Controller_Common {
         $this->template->content = $content;
         $this->template->title = $article['title'];
         $this->template->description = '';
+    }
+
+    public function action_propose(){
+    	$user = Auth::instance();
+    	if ($user->logged_in())
+    	{
+    		if (HTTP_Request::POST == $this->request->method())
+    		{
+    			try
+    			{
+    				$user_info = Auth::instance()->get_user();
+					$propose = Model::factory('Articles')->propose_an_article(
+    					$this->request->post('title'),
+    					$this->request->post('content'),
+    					$user_info->id);
+    				$message = TRUE;
+    			}
+    			catch(Exception $e)
+    			{
+    				$message = 'error';
+    			}
+    		}
+    		$content = View::factory('articles/propose')
+    			->bind('message',$message);
+    		$this->template->head ='<script type="text/javascript" src="'.URL::site("/public/js/autosize-master/jquery.autosize-min.js").'"></script>';
+    		$this->template->content = $content;
+    	}
+    	else
+    	{
+    		HTTP::redirect('login');
+    	}
     }    
 } // Articles

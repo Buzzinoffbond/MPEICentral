@@ -5,7 +5,7 @@ class Controller_Events extends Controller_Common {
     {
         $events = array();
         
-        $content = View::factory('events')
+        $content = View::factory('events/events')
                 ->bind('events', $events)
                 ->bind('pagination', $pagination);
         $total_items = Model::factory('Events')->count_all();
@@ -31,7 +31,7 @@ class Controller_Events extends Controller_Common {
             {
             $id = intval($this->request->param('id'));
  
-            $content = View::factory('event')
+            $content = View::factory('events/event')
                         ->bind('event', $event)
                         ->bind('comments', $comments)
                         ->bind('embedmedia',$embedmedia);
@@ -68,7 +68,7 @@ class Controller_Events extends Controller_Common {
     }
     public function action_calendar()
     {
-        $content = View::factory('calendar')
+        $content = View::factory('events/calendar')
         ->bind('calendar',$calendar)
         ->bind('events',$events)
         ->bind('nextdate', $nextdate)

@@ -44,10 +44,8 @@ class Controller_Admin_Article extends Controller_Admin_CommonAdmin {
         <script type="text/javascript" src="'.URL::site("public/js/autosize-master/jquery.autosize-min.js").'"></script>';
         $this->template->content = $content; 
     }
-     public function action_edit()
-    {            
-     
-        if($this->request->param('id'))
+     public function action_edit(){
+        if ($this->request->param('id'))
         {
             $content = View::factory('admin/article/edit')
                     ->bind('article', $article)
@@ -70,7 +68,7 @@ class Controller_Admin_Article extends Controller_Admin_CommonAdmin {
             $this->template->head    ='<script src="'.URL::site("public/js/ckeditor/ckeditor.js").'"></script>
             <script src="'.URL::site("/public/js/synctranslit/jquery.synctranslit.min.js").'"></script>
             <script type="text/javascript" src="'.URL::site("/public/js/autosize-master/jquery.autosize-min.js").'"></script>';
-            $article=Model::factory('Articles')->get_article_by_id($id);
+            $article=Model::factory('Articles')->get_article_by_id($id);  
         }
         else
         {
@@ -88,7 +86,65 @@ class Controller_Admin_Article extends Controller_Admin_CommonAdmin {
             $articles = Model::factory('Articles')->get_page($offset,$limit);
         }
         $this->template->content = $content;
-    } 
+    }
+    public function action_proposed(){
+        if($this->request->param('id'))
+        {
+            $content = View::factory('admin/article/proposed')
+                    ->bind('article', $article)
+                    ->bind('message', $message);
+            $id=intval($this->request->param('id'));
+            $url_title = URL::title(HelpingStuff::rusToLat($this->request->post('url_title')), '_');
+            if($this->request->post('submit'))
+                {
+                    Model::factory('Articles')->add(
+                        $this->request->post('title'),
+                        $url_title,
+                        $this->request->post('content'),
+                        $this->request->post('content_short'),
+                        $this->request->post('author_id'),
+                        $_FILES['kdpv'],
+                        $this->request->post('kdpv_description')
+                        );
+        
+                    $message='Статья &laquo;'.HTML::chars($this->request->post('title')).'&raquo; опубликована';
+                }
+            $this->template->head    ='<script src="'.URL::site("public/js/ckeditor/ckeditor.js").'"></script>
+            <script src="'.URL::site("/public/js/synctranslit/jquery.synctranslit.min.js").'"></script>
+            <script type="text/javascript" src="'.URL::site("/public/js/autosize-master/jquery.autosize-min.js").'"></script>';
+            $article=Model::factory('Articles')->get_article_by_id($id,'proposed_articles');
+        }
+        else
+        {
+            if($this->request->query('delete'))
+            {
+                try
+                {
+                    $title = Model::factory('Articles')->delete($this->request->query('delete'),'proposed_articles');
+                    $message='Статья '.HTML::chars($title).' удалена';
+                }
+                catch(Exception $e)
+                {
+                    $message = 'Произошла ошибка';
+                }
+            }
+            $articles = array();
+            $content = View::factory('admin/article/proposed-article-list')
+                ->bind('articles', $articles)
+                ->bind('pagination', $pagination)
+                ->bind('message',$message);
+            $total_items = Model::factory('Articles')->count_all('proposed_articles');
+            $pagination = Pagination::factory(array(
+                'total_items' => $total_items,
+                'items_per_page'=> 30,
+                ));
+            $pagination->route_params(array('controller' => $this->request->controller(), 'action' => $this->request->action())); 
+            $offset=$pagination->offset;
+            $limit=$pagination->items_per_page;
+            $articles = Model::factory('Articles')->get_page($offset,$limit,'proposed_articles');
+        }
+        $this->template->content = $content;
+    }
 
     public function action_deletekdpv(){
         if ($this->request->param('id'))

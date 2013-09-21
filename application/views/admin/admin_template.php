@@ -28,6 +28,7 @@
 		<li class="nav-color-green"><a href="<?= URL::site('admin/article/')?>">Новости</a>
 			<ul class="nav-sub-section">
 				<li><a href="<?= URL::site('admin/article/new')?>">Добавить статью</a></li>
+				<li><a href="<?= URL::site('admin/article/proposed')?>">Предложенные</a></li>
 			</ul>
 		</li>
 		<li class="nav-color-orange"><a href="<?= URL::site('admin/media/')?>">Медиа</a>
