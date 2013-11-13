@@ -13,19 +13,16 @@ class Controller_Index extends Controller_Common {
         $content = View::factory('index')
                 ->bind('events', $events)
                 ->bind('matrixitems',$matrixitems)
-                ->bind('articles', $articles);
+                ->bind('articles', $articles)
+                ->bind('contests',$contests);
         $total_items = Model::factory('Events')->count_all();
         $pagination = Pagination::factory(array(
-            'total_items' => $total_items,
-            )
-        );
+            'total_items' => $total_items,));
 
         $matrixitems=Model::factory('Events')->get_events(3);
         $articles= Model::factory('Articles')->get_page(0,10);
-
         $events = Model::factory('Events')->get_events(10);
-        
-
+        $contests = Model::factory('Contest')->get_contests();
 
         $this->template->title = 'Главная';
         $this->template->description = '';

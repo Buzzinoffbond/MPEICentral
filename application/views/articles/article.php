@@ -5,7 +5,7 @@
         <h2><?= HTML::chars($article['title']); ?></h2>
         <?php if (!empty($article['kdpv']))
         {
-            printf('<img src="%s" class="kdpv">', URL::site($article['kdpv']));
+            printf('<img src="%s" alt="%s" class="kdpv">', URL::site($article['kdpv']),HTML::chars($article['kdpv_description']));
             if (!empty($article['kdpv_description'])) 
             {
                 printf('<div class="kdpv_description">%s</div>',HTML::chars($article['kdpv_description']));

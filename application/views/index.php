@@ -1,18 +1,31 @@
-<div class="upper-content">
+<?php if ((!empty($matrixitems)) OR (!empty($contests))): if (!empty($matrixitems)):?>
+<div  class="upper-content">
   <div class="center-matrix">
   <?php foreach($matrixitems as $matrixitem): ?>
-  <a href="<?=URL::site('event/'.$matrixitem['id'].'/'.$matrixitem['url_title']) ?>">
+  <a href="<?=URL::site('event/'.$matrixitem['id'].'-'.$matrixitem['url_title']) ?>">
   <div class="matrix-item" style="background: url(<?= $matrixitem['poster'];?>); background-size: cover; background-position: center;">
   	<div class="matrix-item-text">
-  		<span class="matrix-item-title"><?= $matrixitem['title'];?></span>
+  		<span class="matrix-item-title"><?= HTML::chars($matrixitem['title']);?></span>
   		<div class="sepaline"></div>
   		<span class="matrix-item-date"><?= HelpingStuff::humanisedate($matrixitem['date']);?></span>
   	</div>
   </div>
   </a>
   <?php endforeach; ?>
-  </div>
+
 </div>
+<?php endif; ?>
+<?php if(!empty($contests))
+{
+  echo '<div class="matrix-contests">';
+  foreach ($contests as $contest)
+  {
+    printf('<a href="%s"><div class="matrix-contest" style="background: url(%s); background-size: cover; background-position: center;"><span class="matrix-contest-title">%s</span></div></a>',URL::site('/contest/'.$contest['id'].'-'.$contest['url_title']),URL::site('/public/images/contests/'.$contest['id'].'/'.$contest['cover']),HTML::chars($contest['title']));
+  }
+  echo "</div>";
+} ?>
+</div>
+<?php endif; ?>
 <div class="layout">
 <div class="layout-content">
 <h1>Новости</h1>
@@ -21,15 +34,15 @@
     <?php $i=0; foreach($articles as $article): $i++; $items[]='item'.$i;?>
     <div class="post" data-sort="<?= $i;?>" id="item<?= $i;?>">
     <div class="article-date"><?= HelpingStuff::humanisedate($article["date"]);?></div>
-    <h3 class="post-small-title"><a href="<?=URL::site("articles/".$article["id"]."/".$article["url_title"]);?>"><?=$article["title"];?></a></h3>
+    <h3 class="post-small-title"><a href="<?=URL::site("articles/".$article["id"]."-".$article["url_title"]);?>"><?=HTML::chars($article["title"]);?></a></h3>
     <?php if (!empty($article['kdpv']))
     {
-        printf('<a href="%s"><img src="%s" class="kdpv-small"><div class="clear"></div></a>',URL::site("articles/".$article["id"]."/".$article["url_title"]), URL::site($article['kdpv']));
+        printf('<a href="%s"><img src="%s" alt="%s" class="kdpv-small"><div class="clear"></div></a>',URL::site("articles/".$article["id"]."-".$article["url_title"]), URL::site($article['kdpv']),HTML::chars($article['kdpv_description']));
     }
     ?>
     <p><?= strip_tags($article["content_short"]);?></p>
     <span class="article-author">
-    <a href="<?= URL::site("user/".$article["username"]);?>"><?= $article["username"];?></a>
+    <a href="<?= URL::site("user/".$article["username"]);?>"><?= HTML::chars($article["username"]);?></a>
     </span>
     <div class="clear"></div>
   </div>
@@ -127,6 +140,7 @@ if ($(".mediaquery-status").css('width') === '1024px')
 <a href="<?=URL::site('articles');?>">Ко всем новостям&rarr;</a>
   </div>
 </div>
+<?php if (!empty($events)): ?>
 <div class="layout-content">
   <h1>События</h1>
     <?php $cur_month_year=''; foreach($events as $event):
@@ -136,9 +150,9 @@ if ($(".mediaquery-status").css('width') === '1024px')
       printf('<div class="events-dateseparator"><h2>%s</h2></div>',$cur_month_year);
      } ?>
     <div class="event">
-        <a class='events-link' href="<?=URL::site('event/'.$event['id']);?>">
+        <a class='events-link' href="<?=URL::site('event/'.$event['id'].'-'.$event['url_title']);?>">
           <?php if(!empty($event['poster'])){
-            printf('<img class="events-poster" src="%s">',URL::site($event['poster']));
+            printf('<img class="events-poster" src="%s" alt="%s" >',URL::site($event['poster']),HTML::chars($event['title']));
           } ?>
           <h3 class="events-title"><?= HTML::chars($event['title']);?></h3>
         </a>
@@ -156,6 +170,7 @@ if ($(".mediaquery-status").css('width') === '1024px')
 <a href="<?=URL::site('events');?>">Ко всем событиям&rarr;</a>
   </div>
 </div>
+<?php endif;?>
 <div class="layout-content">
 &nbsp;
 </div>

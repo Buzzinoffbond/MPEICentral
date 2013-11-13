@@ -6,8 +6,8 @@
 
     <div class="album">
         	<a href="<?= URL::site('media/album/'.$album['id']);?>">
-            	<img src="<?= URL::site('public/images/albums/'.$album['dir'].'/thumbnails/'.$album['cover']);?>">
-            	<div class="album-description"><?= $album['title']; ?></div>
+        	<? printf('<img src="%s" alt="%s">',URL::site('public/images/albums/'.$album['dir'].'/thumbnails/'.$album['cover']),HTML::chars($album['title']))?>
+            	<div class="album-description"><?= HTML::chars($album['title']); ?></div>
         	</a>
     </div>
 <?php endforeach; ?>

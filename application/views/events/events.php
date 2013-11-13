@@ -1,6 +1,7 @@
 <div class="layout-content">
   <h1 class="left">События</h1>
   <a class="secondary-nav-link" href="<?= URL::site('events/calendar')?>">Календарь</a>
+  <a class="secondary-nav-link" href="<?= URL::site('events/propose')?>">Предложить событие</a>
   <div class="clear"></div>
     <?php $cur_month_year=''; foreach($events as $event):
     $month_year=HelpingStuff::humanisedate($event['date'],'monthyear');
@@ -9,9 +10,9 @@
       printf('<div class="events-dateseparator"><h2>%s</h2></div>',$cur_month_year);
      } ?>
     <div class="event">
-        <a class='events-link' href="<?=URL::site('event/'.$event['id']);?>">
+        <a class='events-link' href="<?=URL::site('event/'.$event['id'].'-'.$event['url_title']);?>">
           <?php if(!empty($event['poster'])){
-            printf('<img class="events-poster" src="%s">',URL::site($event['poster']));
+            printf('<img class="events-poster" src="%s" alt="%s">',URL::site($event['poster']),HTML::chars($event['title']));
           } ?>
           <h3 class="events-title"><?= HTML::chars($event['title']);?></h3>
         </a>

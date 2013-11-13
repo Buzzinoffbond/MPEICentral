@@ -10,7 +10,12 @@
 <?php foreach($styles as $style): ?>
     <link href="<?php echo URL::base(); ?>public/css/<?php echo $style; ?>.css" 
     rel="stylesheet" type="text/css" />
-<?php endforeach; ?>	
+<?php endforeach; ?>
+<?php foreach($scripts as $script): ?>
+    <link href="<?php echo URL::base(); ?>public/css/<?php echo $style; ?>.css" 
+    rel="stylesheet" type="text/css" />
+    <script src="<?= URL::site('public/js/'.$script.'.js') ?>" type="text/javascript"></script>
+<?php endforeach; ?>
 	<!--[if lt IE 9]>
     <script src="public/js/html5shiv.js"></script>
 	<![endif]-->
@@ -58,7 +63,7 @@ else{?>
 <div class="buffer"></div>
 </div>
 <div class="footer">
-
+	<?= $footer; ?>
 </div>
 <div class="mediaquery-status"></div>
 <script>

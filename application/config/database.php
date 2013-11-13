@@ -18,10 +18,10 @@ return array
 			 *
 			 * Ports and sockets may be appended to the hostname.
 			 */
-			'hostname'   => '/*hostname*/',
-			'database'   => '/*database*/',
-			'username'   => '/*username*/',
-			'password'   => '/*password*/',
+			'hostname'   => '/***HOSTNAME***/',
+			'database'   => '/***DATABASE***/',
+			'username'   => '/***USERNAME***/',
+			'password'   => '/***PASSWORD***/',
 			'persistent' => FALSE,
 		),
 		'table_prefix' => '',
@@ -39,9 +39,9 @@ return array
 			 * string   password    database password
 			 * boolean  persistent  use persistent connections?
 			 */
-			'dsn'        => 'mysql:host=/*hostname*/;dbname=/*dbname*/',
-			'username'   => '/*username*/',
-			'password'   => '/*password*/',
+			'dsn'        => 'mysql:host=/***HOSTNAME***/;/***DATABASE***/',
+			'username'   => '/***USERNAME***/',
+			'password'   => '/***PASSWORD***/',
 			'persistent' => FALSE,
 		),
 		/**

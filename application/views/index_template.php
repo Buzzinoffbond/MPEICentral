@@ -17,7 +17,7 @@
 </head>
 <body>
 <div class="wrap">
-<div class="header">
+<div class="header headerspace">
 	<div class="header-inner">
 	<a href="<?= URL::site(); ?>">
 		<div class="logo">
@@ -56,7 +56,7 @@ else{?>
 <div class="buffer"></div>
 </div>
 <div class="footer">
-
+	<?= $footer; ?>
 </div>
 <div class="mediaquery-status"></div>
 <script>

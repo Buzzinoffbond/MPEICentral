@@ -4,7 +4,7 @@ return array(
 
 	'driver'       => 'ORM',
 	'hash_method'  => 'sha256',
-	'hash_key'     => '/*hash_key*/',
+	'hash_key'     => '/***HASH KEY***/',
 	'lifetime'     => Date::WEEK * 2,
 	'session_type' => Session::$default,
 	'session_key'  => 'auth_user',

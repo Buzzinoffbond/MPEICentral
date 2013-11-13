@@ -9,11 +9,10 @@
 		{
 			echo "Произошла ошибка.";
 		}
-
-		    				foreach ($errors as $error)
-    				{
-    					echo $error;
-    				} ?></h3>
+		foreach ($errors as $error)
+    	{
+    		echo $error;
+    	} ?></h3>
 
 		<form method="POST" action="">
 			<div class="editor-box">

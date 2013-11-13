@@ -41,22 +41,47 @@
 			if (!empty($event['link']))
 			{
 				$linkname=parse_url(HTML::chars($event['link']));
-				printf('<li class="overhid"><span class="event-information-label">Ссылка:</span><a href="%s">%s</a></li>',HTML::chars($event['link']),$linkname['host']);
+				printf('<li class="overhid"><span class="event-information-label">Ссылка:</span><a target="blank" href="%s">%s</a></li>',HTML::chars($event['link']),$linkname['host']);
 			}
 			?>
 		</ul>
 	</div>
+<div class="attend-box">
+	<form class="attend-btn" method="POST" action="">
+		<fieldset>
+			<input type="hidden" name="attend" value="true">
+				<?php
+				if ($i_will_go)
+				{
+					echo '<button class="big-submit wide peach">Я не пойду</button>';
+				}
+				else
+				{
+					echo '<button class="big-submit wide peach">Я пойду</button>';
+				}
+				?>
+		</fieldset>
+	</form>
+	<?php if (!empty($attended))
+	{
+		foreach ($attended as $user)
+		{
+			printf('<a href=%s><img class="attended-avatars" src=%s></a>',URL::site('user/'.$user['username']),URL::site('public/images/userpics/'.$user['userpic']));
+		}
+	}
+	?>
+</div>
 </div>
 <div class="event-description">
 	<p>
-		<?php echo $event['content']; ?>
+		<?= $event['content']; ?>
 	</p>
 </div>
 <div class="clear"></div>
 </div>
 <div class="grey-box">
 	<div class="layout-content">
-		<?php echo $comments; ?>
+		<?= $comments; ?>
 	</div>
 </div>
 <script type="text/javascript">

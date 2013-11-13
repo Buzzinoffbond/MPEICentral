@@ -7,7 +7,7 @@ abstract class Controller_Common extends Controller_Template {
  
     public function before()
     {
-        if (in_array($this->request->action(), array('login', 'register')))
+        if (in_array($this->request->action(), array('login', 'register', 'reset_pass','request_pass_reset')))
         {
             $this->template = 'empty_template';
         }
@@ -18,9 +18,9 @@ abstract class Controller_Common extends Controller_Template {
         View::set_global('user', $user);
         $this->template->content = '';
         $this->template->styles = array('style');
-        $this->template->scripts = '';
+        $this->template->scripts = array('scripts');
         $this->template->head    ='';
-
+        $this->template->footer = View::factory('footer');
         if(Auth::instance()->logged_in('admin'))
         {
             session_start();        

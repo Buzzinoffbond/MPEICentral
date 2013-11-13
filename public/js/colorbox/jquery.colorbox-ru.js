@@ -5,12 +5,12 @@
 	site: themarfa.name
 */
 jQuery.extend(jQuery.colorbox.settings, {
-	current: "изображение {current} из {total}",
-	previous: "назад",
-	next: "вперёд",
-	close: "закрыть",
+	current: "{current} из {total}",
+	previous: "Назад",
+	next: "Вперёд",
+	close: "Закрыть",
 	xhrError: "Не удалось загрузить содержимое.",
 	imgError: "Не удалось загрузить изображение.",
-	slideshowStart: "начать слайд-шоу",
-	slideshowStop: "остановить слайд-шоу"
+	slideshowStart: "Начать слайд-шоу",
+	slideshowStop: "Остановить слайд-шоу"
 });

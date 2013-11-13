@@ -1,7 +1,11 @@
 <h1>Альбомы</h1>
+<?php if(isset($messages))
+foreach ($messages as $message) {
+	printf('<h3>%s</h3>',$message);
+}?>
 <div class="photo-album">
 	<a href="<?= URL::site('admin/media/addalbum');?>">
-		<div class="photo-album-cover"><img src="<?= URL::site('public/images/newalbum.png')?>"></div>
+		<div class="photo-album-cover"><img src="<?= URL::site('public/images/new.png')?>"></div>
 		<div class="photo-album-add">Добавить альбом</div>
 	</a>
 </div>

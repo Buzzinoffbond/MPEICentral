@@ -109,88 +109,78 @@ class Model_Media extends Model
         else
             return array();
     }
-    public function add_images($images,$album_id='1')//альбом id=1 папка default
+    public function add_image($image_file,$album_id)
     {
         $albums=DB::select('dir','cover')
             ->from($this->_tableAlbums)
             ->where('id','=',((int)$album_id))
             ->execute()
-            ->current();  
+            ->current();
         $directory = DOCROOT.'public/images/albums/'.$albums['dir'].'/';
         $directorythumb = DOCROOT.'public/images/albums/'.$albums['dir'].'/thumbnails/';
-        
-        foreach (Arr::rotate($images['images']) as $image_file)
-            {
                 if (
-                    ! Upload::valid($image_file) OR
-                    ! Upload::not_empty($image_file) OR
-                    ! Upload::type($image_file, array('jpg', 'jpeg', 'png', 'gif')) OR
-                    ! Upload::size($image_file,'2M'))
+                    !Upload::valid($image_file) OR
+                    !Upload::not_empty($image_file) OR
+                    !Upload::type($image_file, array('jpg', 'jpeg', 'png', 'gif')) OR
+                    !Upload::size($image_file,'3M'))
                 {
                     return FALSE;
                 }
-
-                if ($file = Upload::save($image_file, NULL, $directory))
+                else
                 {
-                    $filename = strtolower(Text::random('alnum', 20)).'.jpg';
-                    
-                    // Размеры, до которых будем обрезать
-                    $size_width = 200;
-                    $size_height = 200;
-                    // Открываем изображение
-                    $image = Image::factory($file);
-                    // Подсчитываем соотношение сторон картинки
-                    $ratio = $image->width / $image->height;
-                    // Соотношение сторон нужных размеров
-                    $original_ratio = $size_width / $size_height;
-                    // Размеры, до которых обрежем картинку до масштабирования
-                    $crop_width = $image->width;
-                    $crop_height = $image->height;
-                    // Смотрим соотношения
-                    if($ratio > $original_ratio)
+                    if ($file = Upload::save($image_file, NULL, $directory))
                     {
-                        // Если ширина картинки слишком большая для пропорции,
-                        // то будем обрезать по ширине
-                        $crop_width = round($original_ratio * $crop_height);
+                        $filename = strtolower(Text::random('alnum', 20)).'.jpg';
+                        
+                        // Размеры, до которых будем обрезать
+                        $size_width = 200;
+                        $size_height = 200;
+                        // Открываем изображение
+                        $image = Image::factory($file);
+                        // Подсчитываем соотношение сторон картинки
+                        $ratio = $image->width / $image->height;
+                        // Соотношение сторон нужных размеров
+                        $original_ratio = $size_width / $size_height;
+                        // Размеры, до которых обрежем картинку до масштабирования
+                        $crop_width = $image->width;
+                        $crop_height = $image->height;
+                        // Смотрим соотношения
+                        if($ratio > $original_ratio)
+                        {
+                            // Если ширина картинки слишком большая для пропорции,
+                            // то будем обрезать по ширине
+                            $crop_width = round($original_ratio * $crop_height);
+                        }
+                        else
+                        {
+                            // Либо наоборот, если высота картинки слишком большая для пропорции,
+                            // то обрезать будем по высоте
+                            $crop_height = round($crop_width / $original_ratio);
+                        }
+                        $image->save($directory.$filename); //сохраняем оригинал
+                        // Обрезаем по высчитанным размерам до нужной пропорции
+                        $image->crop($crop_width, $crop_height);
+                        // Масштабируем картинку то точных размеров
+                        $image->resize($size_width, $size_height, Image::NONE);
+                        // Сохраняем изображение в файл
+                        $image->save($directorythumb.$filename);
+                        
+                        unlink($file);
                     }
-                    else
-                    {
-                        // Либо наоборот, если высота картинки слишком большая для пропорции,
-                        // то обрезать будем по высоте
-                        $crop_height = round($crop_width / $original_ratio);
-                    }
-                    $image->save($directory.$filename); //сохраняем оригинал
-                    // Обрезаем по высчитанным размерам до нужной пропорции
-                    $image->crop($crop_width, $crop_height);
-                    // Масштабируем картинку то точных размеров
-                    $image->resize($size_width, $size_height, Image::NONE);
-                    // Сохраняем изображение в файл
-                    $image->save($directorythumb.$filename);
-                    
-                    unlink($file);
-                    // Записываем имена файлов в массив
-                    $filenames[]=$filename;
-
                 }
-
-            }   
-        $query = DB::insert($this->_tableImages, array('filename','album_id'));
-        foreach ($filenames as $filename) 
-        {
-           $query->values(array($filename,$album_id));
-        }
-        $query->execute();
-
-        //обложка альбома
-        if(empty($albums['cover']))
-        {
-            DB::update($this->_tableAlbums)
-                    ->set(array('cover'=>end($filenames)))
-                    ->where('id', '=',(int)$album_id)
-                    ->execute();
-        }
-
-     return $filenames;
+            $query = DB::insert($this->_tableImages, array('filename','album_id'))
+            ->values(array($filename,$album_id))
+            ->execute();
+    
+            //обложка альбома
+            if(empty($albums['cover']))
+            {
+                DB::update($this->_tableAlbums)
+                        ->set(array('cover'=>$filename))
+                        ->where('id', '=',(int)$album_id)
+                        ->execute();
+            }
+            return $filename;
     }
     public function delete_album($album_id){
         $album=DB::select('dir')

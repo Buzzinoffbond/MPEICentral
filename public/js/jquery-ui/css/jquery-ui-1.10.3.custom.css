@@ -472,6 +472,9 @@ button.ui-button::-moz-focus-inner {
 	border-right-width: 0;
 	border-left-width: 1px;
 }
+.ui-datepicker-unselectable{
+	background: #1B1B1B;
+}
 .ui-dialog {
 	position: absolute;
 	top: 0;

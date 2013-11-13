@@ -1,4 +1,4 @@
-<div class="login-box">
+<div class="medium-box">
 <? if ($message) : ?>
 	<h3 class="message">
 		<?= $message; ?>
@@ -25,6 +25,7 @@
 </fieldset>
 <fieldset>
 	<input name="remember" type="checkbox" checked="checked"><label class="inline" for="remember">Запомнить меня</label>
+	<span class="right"><?= HTML::anchor('request_pass_reset', 'Забыли пароль?'); ?></fieldset><span>
 </fieldset>
 <fieldset>
 	<input type="submit" class="big-submit loginbtn" name="submit" value="Войти">

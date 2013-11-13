@@ -56,12 +56,13 @@ echo $message; ?></h3>
     		</script>
     		<script>
   				$(function() {
-    			$( "#altdate" ).datepicker({
-    				dateFormat: "DD, d MM, yy",
-    				altField: "#date",
-    				altFormat: "yy-mm-dd",
-    				defaultDate: new Date("<?=$event['date']; ?>") });
-    			$( "#altdate" ).datepicker( $.datepicker.regional[ "ru" ] );
+				$( "#altdate" ).datepicker({
+					dateFormat: "DD, d MM, yy",
+					altField: "#date",
+					altFormat: "yy-mm-dd",
+					defaultDate: new Date("<?=HTML::chars($event['date']); ?>"),
+					minDate: new Date ()});
+				$( "#altdate" ).datepicker( $.datepicker.regional[ "ru" ] );
   				});
   			</script>
   			<script>

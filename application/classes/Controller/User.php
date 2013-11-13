@@ -5,10 +5,6 @@ class Controller_User extends Controller_Common {
 	public function action_index()
 	{	
 		$username = $this->request->param('username');
-		if (!$username)
-			{
-			HTTP::redirect();
-			}
 		$this->template->title = $username;
 		$this->template->content = View::factory('user/info')
 			->bind('user', $user)
@@ -16,7 +12,11 @@ class Controller_User extends Controller_Common {
 		$logged_user = Auth::instance()->get_user();
 		// Load the user information
 		$user = Model::factory('Users')->get_user_info($username);
-		
+		if (!$username OR !$user)
+		{
+			throw new HTTP_Exception_404('Пользователя с таким именем не существует');
+		}
+		$this->template->title = HTML::chars($username);
 	}
 	public function action_edit() 
 	{	
@@ -105,8 +105,8 @@ class Controller_User extends Controller_Common {
 			}
 			else
 			{
-				$client_id = '3877594'; // ID приложения
-    			$redirect_uri = 'http://mpeicentral.artemknyazev.ru/mergevk'; // Адрес сайта
+				$client_id = '/***ID***/'; // ID приложения
+    			$redirect_uri = 'http://mpeicentral.ru/mergevk'; // Адрес сайта
 				$url = 'http://oauth.vk.com/authorize';
 				$params = array(
 		    		'client_id'     => $client_id,
@@ -202,7 +202,7 @@ class Controller_User extends Controller_Common {
 			->bind('vk_link', $vk_link);
 
 		//vkauth
-		$client_id = '/*client_id*/'; // ID приложения
+		$client_id = '/***ID***/'; // ID приложения
     	$redirect_uri = 'http://mpeicentral.ru/vkauth'; // Адрес сайта
 
     	$url = 'http://oauth.vk.com/authorize';
@@ -252,8 +252,8 @@ class Controller_User extends Controller_Common {
 			HTTP::redirect('user/'.$this->request->post('username'));
 		}
 
-		$client_id = '/*client_id*/'; // ID приложения
-    	$client_secret = '/*client_secret*/'; // Защищённый ключ
+		$client_id = '/***ID***/'; // ID приложения
+    	$client_secret = '/***KEY***/'; // Защищённый ключ
     	$redirect_uri = 'http://mpeicentral.ru/vkauth'; // Адрес сайта
 		
 		if (isset($_GET['code'])) {
@@ -323,8 +323,8 @@ class Controller_User extends Controller_Common {
 	public function action_mergevk(){
 		if(Auth::instance()->logged_in())
 		{
-			$client_id = '/*client_id*/'; // ID приложения
-    		$client_secret = '/*client_secret*/'; // Защищённый ключ
+			$client_id = '/***ID***/'; // ID приложения
+    		$client_secret = '/***KEY***/'; // Защищённый ключ
     		$redirect_uri = 'http://mpeicentral.ru/mergevk'; // Адрес сайта
 		
 			if (isset($_GET['code']))
@@ -370,5 +370,95 @@ class Controller_User extends Controller_Common {
 		$user_info = Auth::instance()->get_user();
 		$result = Model::factory("Users")->delete_user($user_info->username);
 		HTTP::redirect();
+	}
+	public function action_request_pass_reset(){
+		if(Auth::instance()->logged_in())
+		{
+			HTTP::redirect();
+		}
+
+		$view = View::factory('user/request_pass_reset')
+			->bind('message', $message);
+		if (HTTP_Request::POST == $this->request->method())
+		{
+			try
+			{
+				$result = Model::factory('Users')->request_password_reset($this->request->post('email'));
+				if ($result===TRUE)
+				{
+					$view = View::factory('user/request_pass_reset_success');
+				}
+				else
+				{
+					$message = 'Не удалось найти email.';
+				}
+			}
+			catch(Exceptions $e)
+			{
+				$message='Произошла ошибка';
+			}
+		}
+		
+		$this->template->content = $view;
+	}
+	public function action_reset_pass(){
+		if ($this->request->query('t') OR !Auth::instance()->logged_in())
+		{
+			try
+			{
+				$result = Model::factory('Users')->check_recovery_token($this->request->query('t'));	
+				if (!empty($result))
+				{
+					$view = View::factory('user/reset_pass')
+					->bind('message',$message)
+					->bind('errors', $errors)
+					->bind('token',$token);
+					$token = $this->request->query('t');
+					if (HTTP_Request::POST == $this->request->method()) 
+					{
+						try
+						{
+							$user = ORM::factory('User')
+								->where('id', '=', $result['id'])
+								->find()
+								->update_user(array(
+									'password'			=>$this->request->post('password'),
+									'password_confirm'	=>$this->request->post('password_confirm'),
+								), array(
+									'password'			
+							));
+							Model::factory('Users')->delete_user_tokens($result['id']);
+
+							Auth::instance()->force_login($user, FALSE);
+							HTTP::redirect('edit');
+
+						}
+						catch (ORM_Validation_Exception $e)
+						{
+				
+							// Set failure message
+							$message = 'Не получилось обновить профиль, есть ошибки.';
+							// Set errors using custom messages
+							$errors = $e->errors('models');
+						}
+					}
+
+					$this->template->content = $view;
+
+				}
+				else
+				{
+					//HTTP::redirect('request_pass_reset/?m=expired');
+				}
+			}
+			catch(Exceptions $e)
+			{
+				echo 'Произошла ошибка';
+			}
+		}
+		else
+		{
+			HTTP::redirect();
+		}
 	}
 }

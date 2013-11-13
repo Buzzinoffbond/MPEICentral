@@ -23,6 +23,8 @@ class Controller_Media extends Controller_Common {
         $offset=$pagination->offset;
         $limit=$pagination->items_per_page;
         $albums = Model::factory('Media')->get_page_of_albums($offset,$limit);
+        $this->template->title = 'Медиа';
+        $this->template->description = 'Альбомы с фотографиями';
         $this->template->head='<script>$(document).ready(function()
 {$(".albums .album:nth-child(5n)").addClass("no-right-margin");});</script>';
         $this->template->content = $content;
@@ -35,6 +37,12 @@ class Controller_Media extends Controller_Common {
         $images = Model::factory('Media')->get_images_from_album($this->request->param('id'));
         $album_info = Model::factory('Media')->get_album_info($this->request->param('id'));
 
+        if (empty($album_info))
+        {
+            throw new HTTP_Exception_404('Такого альбома не существует');
+        }
+        $this->template->title = $album_info['title'];
+        $this->template->description = $album_info['description'];
         $this->template->head='<script>$(document).ready(function()
 {$(".images .image:nth-child(5n)").addClass("no-right-margin");});</script>
 <link href="'.URL::base().'public/js/colorbox/colorbox.css" rel="stylesheet" type="text/css">

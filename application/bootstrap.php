@@ -81,7 +81,7 @@ if (isset($_SERVER['KOHANA_ENV']))
  * Cookie
  */
 // Set the magic salt to add to a cookie
-Cookie::$salt = 'lfutndpvmrzascvmtpfkyuewsogynfh';
+Cookie::$salt = '/***MAGIC SALT HERE***/';
 // Set the number of seconds before a cookie expires
 Cookie::$expiration = Date::WEEK*4; // by default until the browser close
 // Restrict the path that the cookie is available to
@@ -196,7 +196,7 @@ Route::set('articles', 'articles(/page/<page>)', array('page' => '[0-9]+'))
 		'action'     => 'index',
 		'page'       => '',
 	));
-Route::set('user', '<action>(/<id>)', array('action' => 'login|register|logout|edit|delete_me|vkauth|mergevk'))
+Route::set('user', '<action>(/<id>)', array('action' => 'login|register|logout|edit|delete_me|vkauth|mergevk|reset_pass|request_pass_reset'))
         ->defaults(array(
             'controller' => 'user',
     ));
@@ -209,7 +209,17 @@ Route::set('username', 'user/<username>', array('username' => '.+'))
             'controller' => 'user',
             'action'     => 'index',
     ));
-Route::set('article', 'articles/<id>(/<artname>)', array('id' => '[0-9]+'), array('artname' => '.+'))
+Route::set('competitor', 'contest/<id>(-<url_title>)/<competitor_id>(-<url_name>)', array('id' => '[0-9]+'), array('url_title' => '.+'), array('competitor_id' => '[0-9]+'), array('url_name' => '.+'))
+	->defaults(array(
+		'controller' => 'contest',
+		'action'     => 'competitor',		
+	));
+Route::set('contest', 'contest/<id>(-<url_title>)', array('id' => '[0-9]+'), array('url_title' => '.+'))
+	->defaults(array(
+		'controller' => 'contest',
+		'action'     => 'contest',		
+	));
+Route::set('article', 'articles/<id>(-<url_title>)', array('id' => '[0-9]+'), array('url_title' => '.+'))
 	->defaults(array(
 		'controller' => 'articles',
 		'action'     => 'article',		
@@ -219,7 +229,7 @@ Route::set('events', 'events(/page/<page>)', array('page' => '[0-9]+'))
 		'controller' => 'events',
 		'action'     => 'index',		
 	));
-Route::set('event', 'event(/<id>(/<eventname>))', array('id' => '[0-9]+'), array('eventname' => '.+'))
+Route::set('event', 'event(/<id>(-<url_title>))', array('id' => '[0-9]+'), array('url_title' => '.+'))
 	->defaults(array(
 		'controller' => 'events',
 		'action'     => 'event',		

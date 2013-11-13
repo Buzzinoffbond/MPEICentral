@@ -38,6 +38,20 @@ class Controller_Articles extends Controller_Common {
         $article = Model::factory('Articles')->get_article_by_id($id);
  
         $comments_url = 'comments/articles/' . $id;
+        if ($this->request->post('add_comment'))
+        {
+            try
+            {
+                Request::factory($comments_url)
+                    ->method(Request::POST)
+                    ->post(array('data' => $this->request->post()))
+                    ->execute();
+            }
+            catch(Exceptions $e)
+            {
+                //log it
+            }
+        }    
         $comments = Request::factory($comments_url)->execute();
  
         $this->template->content = $content;

@@ -3,6 +3,11 @@
 class Model_Events extends Model
 {
     protected $_tableEvents = 'events';
+    protected $_tableEventsProposed = 'events_proposed';
+    protected $_tableEventsComments = 'events_comments';
+    protected $_tableEventsAttendance = 'events_attendance';
+    protected $_tableUsers = 'users';
+    protected $_tableUsersInfo = 'users_info';
  
     /**
      * Get all events
@@ -19,27 +24,30 @@ class Model_Events extends Model
     {
         $query = DB::select('*')
                 ->from($this->_tableEvents)
-                ->where('date','>',date("o\-m\-d'", mktime(0,0,0,date('m'),date('d'),date('Y'))) )
+                ->where('date','>=',date("o\-m\-d", mktime(0,0,0,date('m'),date('d'),date('Y'))) )
                 ->order_by('date','ASC')
                 ->limit((int)$limit)
                 ->execute()
                 ->as_array();
-
         if($query)
             return $query;
         else
             return array();
+
     }
-    public function get_event_by_id($id = '')
+    public function get_event_by_id($id = '',$table = NULL)
     {
-        $sql = "SELECT * FROM ". $this->_tableEvents ." WHERE `id` = :id";
- 
-        $query = DB::query(Database::SELECT, $sql, FALSE)
-                         ->param(':id', (int)$id)
-                         ->execute();
- 
-        $result = $query->as_array();
- 
+        if (empty($table))
+        {
+            $table = $this->_tableEvents;
+        }
+        $result = DB::select($table.'.*','username')
+                ->from($table)
+                ->join('users')
+                ->where($table.'.id', '=', $id)
+                ->on($table.'.author_id', '=','users.id' )
+                ->execute()
+                ->as_array();
         if($result)
             return $result[0];
         else
@@ -56,7 +64,11 @@ class Model_Events extends Model
     }
     public function count_all()
     {
-        $query = DB::query(Database::SELECT, 'SELECT COUNT(*) AS "total_items" FROM '.$this->_tableEvents)
+        if (empty($table))
+        {
+            $table = $this->_tableEvents;
+        }
+        $query = DB::query(Database::SELECT, 'SELECT COUNT(*) AS "total_items" FROM '.$table)
             ->execute()
             ->get('total_items', 0);
 
@@ -66,12 +78,35 @@ class Model_Events extends Model
         else
             return FALSE;
     }
-    public function get_page_by_id($start,$nums)
+    /*
+    *   count upcoming events
+    **/
+    public function count_upcoming()
     {
-        $query = DB::select($this->_tableEvents.'.*','username')
-                ->from($this->_tableEvents)
+        if (empty($table))
+        {
+            $table = $this->_tableEvents;
+        }
+        $query = DB::query(Database::SELECT, 'SELECT COUNT(*) AS "total_items" FROM '.$table.' WHERE date>=NOW()')
+            ->execute()
+            ->get('total_items', 0);
+
+
+        if($query)
+            return intval($query);
+        else
+            return FALSE;
+    }
+    public function get_page_by_id($start,$nums,$table = NULL)
+    {
+        if (empty($table))
+        {
+            $table = $this->_tableEvents;
+        }
+        $query = DB::select($table.'.*','username')
+                ->from($table)
                 ->join('users')
-                ->on($this->_tableEvents.'.author_id', '=','users.id' )
+                ->on($table.'.author_id', '=','users.id' )
                 ->order_by('id','DESC')
                 ->limit((int)$nums)
                 ->offset((int)$start)
@@ -81,20 +116,25 @@ class Model_Events extends Model
          else
              return FALSE;
     }
-    public function get_page_by_date($start,$nums,$start_date = NULL)
+    public function get_page_by_date($start,$nums,$start_date = NULL, $table = NULL)
     {
         if (empty($start_date)) {
             $start_date = date("Y-m-d");
         }
-        $query = DB::select($this->_tableEvents.'.*','username')
-                ->from($this->_tableEvents)
+        if (empty($table))
+        {
+            $table = $this->_tableEvents;
+        }
+        $query = DB::select($table.'.*','username')
+                ->from($table)
                 ->join('users')
-                ->on($this->_tableEvents.'.author_id', '=','users.id' )
-                ->where('date','>',$start_date)
+                ->on($table.'.author_id', '=','users.id' )
+                ->where('date','>=',$start_date)
                 ->order_by('date','ASC')
                 ->limit((int)$nums)
                 ->offset((int)$start)
-                ->execute();
+                ->execute()
+                ->as_array();
          if($query)
             return $query;
          else
@@ -168,11 +208,30 @@ class Model_Events extends Model
                         ->execute();
         }
     }
-    public function delete($id)
+    public function delete($id,$table = NULL)
     {
-        $query = DB::delete($this->_tableEvents)
+        if (empty($table))
+        {
+            $table = $this->_tableEvents;
+        }
+        $poster = DB::select('poster')
+                ->from($table)
+                ->where('id', '=', (int)$id)
+                ->execute()
+                ->as_array();
+        
+        
+        DB::delete($this->_tableEventsComments)
+        ->where('event_id','=',(int)$id)
+        ->execute();
+        
+        $query = DB::delete($table)
                     ->where('id', '=', (int)$id)
                     ->execute();
+        if(!empty($poster[0]['poster']))
+        {
+            unlink($poster[0]['poster']);
+        }
     }
     public function delete_poster($event_id){
 
@@ -189,6 +248,79 @@ class Model_Events extends Model
         else 
         { 
             return FALSE;
+        }
+    }
+
+    /**
+    *   Propose an event
+    */
+    public function propose_an_event($title,$date,$content,$author_id){
+        if (!empty($title))
+        {
+            $query = DB::insert($this->_tableEventsProposed, array('title','content','date','author_id'))
+                ->values(array(
+                    $title,
+                    $content,
+                    $date,
+                    $author_id))
+                ->execute();
+            if ($query)
+                return TRUE;
+            else
+            {
+                throw new Exception('Произошла ошибка');
+            }
+        }
+        else
+        {
+            throw new Exception('Название не может быть пустыми');
+        }
+    }
+    public function get_attended($event_id){
+        $attended = DB::select($this->_tableUsers.'.*')
+            ->from($this->_tableEventsAttendance)
+            ->where('event_id','=',$event_id)
+            ->join($this->_tableUsers)
+            ->on($this->_tableUsers.'.id','=','user_id')
+            ->execute();
+        if($attended)
+        {
+            return $attended;
+        }
+        return FALSE;
+    }
+    public function check_events_attend($event_id,$user_id){
+        $attend = DB::select('*')
+            ->from($this->_tableEventsAttendance)
+            ->where('event_id','=',(int)$event_id)
+            ->where('user_id','=',(int)$user_id)
+            ->execute()
+            ->current();
+        if (!empty($attend))
+        {
+            return TRUE;
+        }
+        return FALSE;
+    }
+    /**
+    *   set account attend event. if it has already set, unset
+    *
+    */
+    public function attend($event_id,$user_id)
+    {
+        if ($this->check_events_attend($event_id,$user_id))
+        {
+            $unset = DB::delete($this->_tableEventsAttendance)
+            ->where('user_id','=',(int)$user_id)
+            ->execute();
+        }
+        else
+        {
+           $set = DB::insert($this->_tableEventsAttendance, array('user_id','event_id'))
+            ->values(array(
+                (int)$user_id,
+                (int)$event_id))
+            ->execute(); 
         }
     }
 }

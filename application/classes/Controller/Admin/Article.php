@@ -112,7 +112,7 @@ class Controller_Admin_Article extends Controller_Admin_CommonAdmin {
             $this->template->head    ='<script src="'.URL::site("public/js/ckeditor/ckeditor.js").'"></script>
             <script src="'.URL::site("/public/js/synctranslit/jquery.synctranslit.min.js").'"></script>
             <script type="text/javascript" src="'.URL::site("/public/js/autosize-master/jquery.autosize-min.js").'"></script>';
-            $article=Model::factory('Articles')->get_article_by_id($id,'proposed_articles');
+            $article=Model::factory('Articles')->get_article_by_id($id,'articles_proposed');
         }
         else
         {
@@ -120,7 +120,7 @@ class Controller_Admin_Article extends Controller_Admin_CommonAdmin {
             {
                 try
                 {
-                    $title = Model::factory('Articles')->delete($this->request->query('delete'),'proposed_articles');
+                    $title = Model::factory('Articles')->delete($this->request->query('delete'),'articles_proposed');
                     $message='Статья '.HTML::chars($title).' удалена';
                 }
                 catch(Exception $e)
@@ -133,7 +133,7 @@ class Controller_Admin_Article extends Controller_Admin_CommonAdmin {
                 ->bind('articles', $articles)
                 ->bind('pagination', $pagination)
                 ->bind('message',$message);
-            $total_items = Model::factory('Articles')->count_all('proposed_articles');
+            $total_items = Model::factory('Articles')->count_all('articles_proposed');
             $pagination = Pagination::factory(array(
                 'total_items' => $total_items,
                 'items_per_page'=> 30,
@@ -141,7 +141,7 @@ class Controller_Admin_Article extends Controller_Admin_CommonAdmin {
             $pagination->route_params(array('controller' => $this->request->controller(), 'action' => $this->request->action())); 
             $offset=$pagination->offset;
             $limit=$pagination->items_per_page;
-            $articles = Model::factory('Articles')->get_page($offset,$limit,'proposed_articles');
+            $articles = Model::factory('Articles')->get_page($offset,$limit,'articles_proposed');
         }
         $this->template->content = $content;
     }

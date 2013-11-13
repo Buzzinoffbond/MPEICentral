@@ -16,7 +16,7 @@ if(Auth::instance()->logged_in())
     <form action="" method="post">
         Сообщение:</br>
         <textarea name="message" class="comment-textarea"></textarea><br>
-        <input class="big-submit" name="send" type="submit" value="Отправить" /><?= Arr::get($errors, 'message'); ?>
+        <input class="big-submit" name="add_comment" type="submit" value="Отправить" /><?= Arr::get($errors, 'message'); ?>
     </form>
 <?php 
 }

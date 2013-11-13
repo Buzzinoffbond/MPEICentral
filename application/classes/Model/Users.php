@@ -4,6 +4,7 @@ class Model_Users extends Model
 {
     protected $_tableUsers = 'users';
     protected $_tableUsersInfo = 'users_info';
+    protected $_tablePass_Recovery_tokens = 'pass_recovery_tokens';
  
     /**
      * Get all articles
@@ -273,5 +274,74 @@ class Model_Users extends Model
         else {
             return FALSE;
         }
+    }
+    public function request_password_reset($email){
+        $user_info = ORM::factory('User', array('email' => $email));
+        if ($user_info->loaded())
+        {   
+            $this->delete_user_tokens($user_info->id);
+            $token = strtolower(Text::random('alnum',40));
+            $expires = strtotime('+1 hour');
+            DB::insert($this->_tablePass_Recovery_tokens, array('user_id','token','expires'))
+                    ->values(array(
+                        $user_info->id,
+                        $token,
+                        $expires))
+                    ->execute();
+
+            $link = 'http://mpeicentral.ru/reset_pass/?t='.$token;
+
+            $to      = $email;
+            $subject = 'Восстановление пароля аккаунта mpeicentral.ru';
+            $message = 'Мы получили запрос на смену пароля для аккаунта MPEICentral.<br>
+            Для смены пароля перейдите по ссылке <br>'
+            .HTML::anchor($link, $link).'<br>
+            Ссылка будет действовать в течении часа или до следующего запроса на смену пароля<br>
+            Если вы не запрашивали смену пароля, просто проигнорируйте это письмо.';
+            
+            // Заголовки сообщения, в них определяется кодировка сообщения, поля From, To и т.д.
+            $headers = "MIME-Version: 1.0\r\n";
+            $headers .= "Content-type: text/html; charset=utf8\r\n";
+            $headers .= "To: $to\r\n";
+            $headers .= "From: MPEICentral <noreply@mpeicentral.ru>";
+ 
+            Mailer::MailSmtp ($to, $subject, $message, $headers);
+
+            return true;
+        } 
+        else
+        {
+            return false;
+        }     
+    }
+    public function check_recovery_token($token){
+
+        $data = DB::select('user_id','expires')
+            ->from($this->_tablePass_Recovery_tokens)
+            ->where('token','=',$token)
+            ->execute()
+            ->as_array();
+        if (!empty($data)) 
+        {
+            $user_id = $data[0]['user_id'];
+            $expired = $data[0]['expires'];
+
+            if ($expired>time())
+            {
+                return $user_id;
+            }
+        }
+        
+        
+        DB::delete($this->_tablePass_Recovery_tokens)
+            ->where('expires', '<', time())
+            ->execute();
+        return false;
+    }
+    public function delete_user_tokens($user_id)
+    {
+            DB::delete($this->_tablePass_Recovery_tokens)
+            ->where('user_id', '=', (int)$user_id)
+            ->execute();
     }
 } // end Users

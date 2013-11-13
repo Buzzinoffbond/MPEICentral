@@ -23,7 +23,7 @@ echo $message; ?></h3>
                     <?=HTML::chars($event['title']); ?>
                 </a>
                 &nbsp;
-                <a target="blank" href="<?= URL::site('/event/'. $event['id'].'/'.$event['url_title']); ?>">
+                <a target="blank" href="<?= URL::site('/event/'. $event['id'].'-'.$event['url_title']); ?>">
                     <i class="i-external_link"></i>
                 </a>
             </td>

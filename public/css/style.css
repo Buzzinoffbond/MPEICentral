@@ -16,7 +16,7 @@ h1,h2,h3,h4,h5,h6{
 h1{
     margin-bottom: 20px;
 }
-ul {
+ul{
     margin: 0;
     padding: 0;
     list-style: none;
@@ -33,11 +33,15 @@ ul {
 .overhid{
     overflow: hidden;
 }
+.nobr{
+    white-space: nowrap;
+}
 .wrap{
-    margin-bottom: -50px;
+    margin-bottom: -100px;
+    min-height: 100%;
 }
 .buffer{
-    height: 50px;
+    height: 100px;
 }
 a:link{
     color: #0072C6; 
@@ -74,9 +78,17 @@ a img{
     color: #0072C6;
     text-decoration: underline;
 }
+input{
+    padding: 1px;
+}
 input, textarea{
     font-family: "PT Sans",arial,sans-serif;
     font-size: 16px;
+}
+fieldset{
+    border:0;
+    padding: 10px 0 ;
+    margin: 0;
 }
 .mediaquery-status{
     width:0px;
@@ -133,7 +145,11 @@ i{
     padding: 20px;
 }
 .r-img{
-    max-width: 100%;
+    width: 100%;
+}
+.label{
+    display: block;
+    margin: 5px 0;
 }
 /*Header*/
 .header{
@@ -235,32 +251,50 @@ nav{
 	padding: 5px;
     position: relative;
 }
+.footer{
+
+}
+.footer-inner{
+    max-width: 1200px;
+    margin: 0 auto;
+    text-align: center;
+    padding: 20px;
+}
+.footer-inner a{
+    margin-right: 10px;
+}
+.footer-inner a:link,.footer-inner a:visited{
+    color:#616161;
+}
+.footer-inner a:hover{
+    color:#BBB;
+}
 /*index*/
 .all-articles-link{
     text-align: right;
 }
 /*login*/
-.login-box{
+.medium-box{
     background: #FFF;
     padding: 20px 5px;
     box-shadow: 0px 0px 10px #000;
 }
-.login-box fieldset{
+.medium-box fieldset{
     border: 0;
     padding: 10px 0;
     margin: 0;
 }
-.login-box fieldset label{
+.medium-box fieldset label{
     display: block;
 }
-.login-box fieldset .inline{
+.medium-box fieldset .inline{
     display: inline;
 }
-.login-box fieldset input[type="text"],.login-box fieldset input[type="password"], .login-box fieldset input[type="email"]{
+.medium-box fieldset input[type="text"],.medium-box fieldset input[type="password"], .medium-box fieldset input[type="email"]{
     width:100%;
     padding: 5px;
 }
-.login-box .loginbtn{
+.medium-box .loginbtn{
     width:100%;
 }
 .vk-btn{
@@ -351,6 +385,34 @@ nav{
     margin: 5px 0 0 0;
     display: block;
 }
+.upper-content{
+    margin: 50px 0;
+}
+.upper-content a:link{
+    text-decoration: none;
+}
+.matrix-contests{
+    max-width: 1200px;
+    margin: 0 auto;
+}
+.matrix-contest{
+    text-align: center;
+    padding: 20px;
+    color: #FFF;
+    opacity: 0.8;
+    transition: opacity .4s ease;
+}
+.matrix-contest:hover{
+    opacity: 1;
+    transition: opacity .4s ease;
+}
+.matrix-contest-title{
+    font-size: 18pt;
+    font-weight: bold;
+    margin: 0 0 5px 0;
+    display: block;
+    text-shadow: 0 0 5px #000;
+}
 /*events*/
 .events-dateseparator{
     text-align: center;
@@ -425,6 +487,13 @@ nav{
 .event-description{
     padding: 0 5px 5px 5px;
 }
+.attended-avatars{
+    width:50px;
+    margin: 0 10px 10px 10px;
+}
+.attend-btn{
+    padding: 0 10px;
+}
 /*controls*/
 .big-submit{
     padding: 15px;
@@ -455,6 +524,18 @@ nav{
     -moz-transition: background .1s ease;
     -o-transition: background .1s ease;
     transition: background .1s ease;
+}
+.peach{
+    background:#e56c69;
+}
+.peach:hover{
+    background:#F45D59;
+}
+.peach:active{
+    background:#cd5c5c;
+}
+.wide{
+    width:100%;
 }
 /*Calendar*/
 .calendar-container{
@@ -572,9 +653,14 @@ nav{
     margin: 3em 0 0 2em;
 }
 /*community*/
+.shouts{
+    padding: 20px 0;
+}
 .shout{
-    padding:10px 0 10px 0;
     margin-bottom:10px;
+}
+.shout-child{
+    margin-left: 70px;
 }
 .shout-message{
     margin-left: 70px;
@@ -582,15 +668,18 @@ nav{
 .create-shout-box{
     padding:10px 0 10px 0;
 }
-.create-shout-box textarea{
-    width:100%;
+.message{
+    width:80%;
+    float: left;
     transition: height 0.2s;
     vertical-align: top;
     font-family: 'PT Sans','arial', sans-serif;
     font-size: 16px;
+    resize:none;
 }
 .shout-submit{
-    float: left;
+    float: right;
+    width: 20%;
 }
 .shout-userpic{
     width:60px;
@@ -626,6 +715,29 @@ a:hover .shout-author {
     font-weight: bold;
     display: none;
 }
+.thread{
+    padding: 10px 0;
+}
+.shout-replybox{
+    margin-left: 70px;
+}
+.shout-replybox input{
+    width: 100%;
+}
+.shout-input-placeholder{
+    color: #BBB;
+}
+.answer-link{
+    display: block;
+    float: right;
+    border-bottom: 1px dashed #0072C6;
+}
+.answer-link:link{
+    text-decoration: none;
+}
+.answer-link:hover{
+    color: #0072C6;
+}
 /*profile*/
 .usertopbox{
     height:20px;
@@ -637,6 +749,13 @@ a:hover .shout-author {
 }
 .left{
     float:left;
+}
+.right{
+    float: right;
+}
+.center{
+    display: block;
+    text-align: center;
 }
 .grey-box{
     background:#EEE;
@@ -713,7 +832,6 @@ a:hover .shout-author {
     max-width: 100% !important;
     width:auto !important;
 }
-
 .article-date{
     font-size: 0.8em;
     color: #BBB;
@@ -747,6 +865,91 @@ a:hover .shout-author {
     width: 100%;
     height: 100px;
 }
+/*contest*/
+.contest-cover{
+    width: 100%;
+    height: 200px;
+    background: #000;
+    position: relative;
+}
+.contest-cover-title{
+    position: relative;
+    width: 100%;
+    text-align: center;
+    top: 50%;
+    color: #FFF;
+    height: 2em;
+    font-size: 2em;
+    text-shadow: 0 0 5px #000;
+    font-weight: bold;
+}
+.contest-competitors{
+    margin: -3em 0 0 -2em;
+    text-align: center;
+}
+.contest-competitor
+{
+    width:200px;
+    text-decoration: none;
+    display: inline-block;
+    vertical-align: top;
+    text-align: left;
+    margin: 3em 0 0 2em;
+}
+.contest-competitor-img{
+    width: 100%;
+    border-radius: 100px;
+}
+.contest-competitor-name{
+    text-align: center;
+    margin-bottom: 10px;
+    width: 100%;
+}
+.contest-competitor a:link, .contest-competitor a:visited{
+    color: #000;
+    font-weight: bold;
+    text-decoration: none;
+}
+.contest-competitor a:hover{
+    text-decoration: underline;
+}
+.contest-competitor-vote{
+    text-align: center;
+}
+/*competitor*/
+.competitor-img{
+    text-align: center;
+    max-height: 300px;
+}
+.competitor-img img{
+    max-width:100%;
+    max-height: 100%;
+}
+.competitor-description{
+    padding: 0 5px 20px 5px;
+}
+.competitor-photo{
+    float: left;
+    margin: 0 20px 20px 0;
+}
+.competitor-contest{
+    text-align: center;
+    padding: 20px;
+    color: #FFF;
+    opacity: 0.8;
+    transition:all .2s ease-out;
+}
+.competitor-contest:hover
+{
+    opacity: 1;
+    transition:all .2s ease-out;
+}
+.competitor-contest-wrap{
+    background: #000;
+}
+.competitor-contest-wrap a:link{
+    text-decoration: none;
+}
 /*text decoration*/
 .marker{
     background:#FFFF00;
@@ -758,15 +961,32 @@ blockquote {
     font-size: 1.2em;
 }
 .event-description ul, .article ul{
-    list-style: disc;
 }
 .event-description ul li, .article ul li{
-    list-style: disc;
     margin: 0 0 5px 0;
 }
 ol li{
     padding: 0 0 5px 0;
 }
+/*propose article*/
+.propose-article textarea{
+    width:100%;
+    height:200px;
+    -webkit-transition: height .2s ease;
+    -moz-transition: height .2s ease;
+    transition: height .2s ease;
+}
+.propose-article input{
+    width:100%;
+}
+.propose-article .big-submit{
+    width: 100%;
+}
+
+
+
+
+/******************************600px******************************/
 
 @media screen and (min-width: 600px) {
 .mediaquery-status{
@@ -801,32 +1021,24 @@ nav{
     margin-bottom: 50px;
 }
 /*login*/
-.login-box {
+.medium-box {
     width:600px;
     margin: 0 auto;
     padding: 20px;
 }
 /*matrix*/
-.center-matrix{
-    margin: 50px 0;
+.upper-content{
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
     box-shadow: 0 0 10px #000;
 }
 .matrix-item{
     height: 150px;
 }
 /*comments*/
-.article-comments{
-    border-top: none;
-    border-left: 1px solid #BEBEBE;
-    padding: 10px;
-    width:40%;
-    display: table-cell;
-}
 .comment-textarea{
     width: 450px;
-}
-.article-comments .comment-textarea{
-    width:100%;
 }
 /*calendar*/
 .full{
@@ -876,7 +1088,7 @@ nav{
 }
 .vk-merge{
     max-width: 400px;
-    margin-left: 140px; 
+    margin-left: 0; 
 }
 /*articles*/
 .first-column{
@@ -894,13 +1106,8 @@ nav{
     display: none;
 }
 /*article*/
-.article-wrap{
-    display: table-row;
-}
 .article{
-    width: 60%;
     padding: 10px;
-    display: table-cell;
 }
 /*event*/
 .event-poster{
@@ -963,8 +1170,53 @@ blockquote {
 .event-description ul li, .article ul li{
     margin: 0 0 5px 40px;
 }
-
+/*propose article*/
+.propose-article{
+    width:60%;
+    float: left;
+    padding-right:10px; 
 }
+.propose-article textarea{
+    height:200px;
+    -webkit-transition: height .2s ease;
+    -moz-transition: height .2s ease;
+    transition: height .2s ease;
+}
+.propose-article input{
+}
+.propose-article .big-submit{
+    width: 200px;
+}
+.propose-article-rules{
+    float:right;
+    width: 40%;
+    padding-left:10px; 
+}
+/*contest*/
+.contest-cover{
+    height: 300px;
+}
+/*competitor*/
+.competitor-img{
+    max-height: none;
+    text-align: left;
+    float: left;
+    width:45%;
+    
+}
+.competitor-img img{
+    width:100%;
+    max-height: none;
+    max-width: none;
+}
+.competitor-description{
+    float:right;
+    width:55%;
+    padding: 0 10px 20px 10px;
+}
+}
+/*****************************1024px*****************************/
+
 @media screen and (min-width: 1024px) {
 .mediaquery-status{
     width:1024px;
@@ -986,7 +1238,7 @@ blockquote {
 }
 .center-matrix{
     max-width:1200px;
-    margin: 50px auto;
+    margin: 0 auto;
     height: 500px;
 }
 .matrix-item{
@@ -1029,11 +1281,26 @@ blockquote {
     float: right;
 }
 /*article*/
+.article-wrap{
+    display: table-row;
+}
 .article{
     padding: 20px;
+    width: 60%;
+    display: table-cell;
 }
 .article-comments{
     padding: 20px;
+}
+.article-comments{
+    border-top: none;
+    border-left: 1px solid #BEBEBE;
+    padding: 10px;
+    width:40%;
+    display: table-cell;
+}
+.article-comments .comment-textarea{
+    width:100%;
 }
 /*profile*/
 .edit-info-label{
@@ -1098,5 +1365,13 @@ blockquote {
 }
 .showcase-content{
     height: 495px !important;
+}
+/*contest*/
+.contest-cover{
+    height: 500px;
+}
+/*competitor*/
+.competitor-description{
+    padding: 0 20px 20px 20px;
 }
 }

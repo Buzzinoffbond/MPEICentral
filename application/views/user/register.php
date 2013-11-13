@@ -1,4 +1,4 @@
-<div class="login-box">
+<div class="medium-box">
 <? if ($message) : ?>
 	<h3 class="message">
 		<?= $message; ?>

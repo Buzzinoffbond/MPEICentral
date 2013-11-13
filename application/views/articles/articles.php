@@ -10,7 +10,7 @@
     <h3 class="post-small-title"><a href="<?=URL::site("articles/".$article["id"]."/".$article["url_title"]);?>"><?=$article["title"];?></a></h3>
     <?php if (!empty($article['kdpv']))
     {
-        printf('<a href="%s"><img src="%s" class="kdpv-small"><div class="clear"></div></a>',URL::site("articles/".$article["id"]."/".$article["url_title"]), URL::site($article['kdpv']));
+        printf('<a href="%s"><img src="%s" alt="%s" class="kdpv-small"><div class="clear"></div></a>',URL::site("articles/".$article["id"]."-".$article["url_title"]), URL::site($article['kdpv']),HTML::chars($article['kdpv_description']));
     }
     ?>
     <p><?= strip_tags($article["content_short"]);?></p>

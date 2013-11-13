@@ -36,7 +36,7 @@ class Model_Comments extends Model
         $section_row = substr($section, 0, -1)."_id";
         
         DB::insert($table, array($section_row, 'user_id', 'message'))
-            ->values(array($item_id, $user_id, $message))
+            ->values(array($item_id,(int)$user_id, $message))
             ->execute();                       
     }
 }

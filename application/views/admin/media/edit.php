@@ -1,4 +1,8 @@
 <h1>Альбом</h1>
+<?php if(isset($messages))
+foreach ($messages as $message) {
+	printf('<h3>%s</h3>',$message);
+}?>
 <form method="POST" action="" enctype="multipart/form-data">
 		<div class="control-group">
 			<label class="label" for="title">Название альбома:</label>
@@ -11,10 +15,8 @@
 		<input type="hidden" name='sort_photos' id="sort_photos">
 		<div class="control_group">
 			<label class="label" for="description"></label>
-			<input type='submit' name="update_info" value="Обновить">
+			<input type='submit' name="update_info" value="Обновить">&nbsp;<button class="big-submit upload-btn" id="show-box">Загрузить файлы..</button>
 		</div>
-
-	
 </form>
 
 
@@ -35,11 +37,8 @@
 <?php endforeach; ?>
 </ul>
 <div class="clear"></div>
-<form method='post' action='' enctype="multipart/form-data">
-	<input  name="images[]" type="file" multiple/>
-	<input type='submit' name="add_images" value="Загрузить в альбом">
-</form>
 <p><span class="delete"><a href="<?= URL::site('admin/media/delete/'.$album_info['id']);?>">Удалить альбом</a></span></p>
+<div class="floatbox" id="upload-box"><div id="uploader">Ваш браузер не поддерживает HTML5,Flash загрузку.</div></div>
 <script>
 $(document).ready(function(){
     $('#description').autosize({append: "\n"}); 
@@ -69,5 +68,41 @@ $(document).ready(function(){
       	}
       	
       }
+    $('#show-box').on('click',function(event){
+    	event.preventDefault();
+    	$('#upload-box').fadeIn();
+	});  
+	$(document).mouseup(function (e)
+	{
+    	var container = $("#upload-box");
+
+    	if (!container.is(e.target) // if the target of the click isn't the container...
+        	&& container.has(e.target).length === 0) // ... nor a descendant of the container
+    	{
+        	container.fadeOut();
+    	}
 	});
+    $("#uploader").pluploadQueue({
+        // General settings
+        runtimes : 'html5,flash,html4',
+        url : "<?= URL::site('admin/ajax/uploadimg?id='.$album_info['id']);?>",
+        flash_swf_url : "<?= URL::site('public/js/plupload/plupload.flash.swf');?>",
+        max_file_size : '3mb',
+        // Specify what files to browse for
+        filters : [
+            {title : "Image files", extensions : "jpg,jpeg,gif,png"}
+        ]
+    });
+
+    var uploader = $('#uploader').pluploadQueue();
+
+    uploader.bind('FileUploaded', function() {
+        if (uploader.files.length == (uploader.total.uploaded + uploader.total.failed))
+        {
+            location.reload();
+        }
+    });
+
+
+});
 </script>

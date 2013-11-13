@@ -6,7 +6,7 @@ class Controller_Admin_Media extends Controller_Admin_CommonAdmin {
         $content = View::factory('admin/media/album-list')
                     ->bind('albums',$albums)
                     ->bind('pagination',$pagination)
-                    ->bind('message',$message);
+                    ->bind('messages',$messages);
         $total_items = Model::factory('Media')->count_all_albums();
         $pagination = Pagination::factory(array(
             'total_items' => $total_items,
@@ -27,19 +27,14 @@ class Controller_Admin_Media extends Controller_Admin_CommonAdmin {
     public function action_addalbum(){
         $content = View::factory('admin/media/addalbum')
                                 ->bind('arr',$arr)
-                                ->bind('message',$message);
+                                ->bind('messages',$messages);
         $arr=array();
-        if(isset($_POST['submit']))
+        if($this->request->post('submit'))
         {
             $newalbum=Model::factory('Media')->add_album(
-                        $_POST['title'],
-                        $_POST['description']);
-            $message='Альбом &laquo;<a href="'.URL::site("admin/media/edit/".$newalbum['0']).'">'.$_POST['title'].'</a>&raquo; создан.';
-                if(!empty($_FILES) && $newalbum['1']==1)
-                {
-                    $images = Model::factory('Media')->add_images($_FILES,$newalbum['0']);
-                    $message=$message.' Добавлено '.count($images).' изображений';
-                }
+                        $this->request->post('title'),
+                        $this->request->post('description'));
+            HTTP::redirect(URL::site("admin/media/edit/".$newalbum['0']));
         }
         
         $this->template->content = $content;
@@ -48,10 +43,6 @@ class Controller_Admin_Media extends Controller_Admin_CommonAdmin {
     {
         if($this->request->param('id'))
         {        
-            if ($this->request->post('add_images'))
-            {     
-                $result = Model::factory('Media')->add_images($_FILES,$this->request->param('id'));
-            }
             if ($this->request->post('update_info'))
             {     
                 $result = Model::factory('Media')->update_album(
@@ -68,14 +59,18 @@ class Controller_Admin_Media extends Controller_Admin_CommonAdmin {
             }
 
             $content = View::factory('admin/media/edit')
-                                ->bind('message',$message)
+                                ->bind('messages',$messages)
                                 ->bind('images',$images)
                                 ->bind('album_info',$album_info);
 
             $images = Model::factory('Media')->get_images_from_album($this->request->param('id'));
             $album_info = Model::factory('Media')->get_album_info($this->request->param('id'));
 
-            $this->template->head ='<script type="text/javascript" src="'.URL::site("public/js/autosize-master/jquery.autosize-min.js").'"></script>';
+            $this->template->head ='<script type="text/javascript" src="'.URL::site("public/js/autosize-master/jquery.autosize-min.js").'"></script>
+            <script type="text/javascript" src="'.URL::site("public/js/plupload/plupload.full.min.js").'"></script>
+            <script type="text/javascript" src="'.URL::site("public/js/plupload/jquery.plupload.queue/jquery.plupload.queue.min.js").'"></script>
+            <script type="text/javascript" src="'.URL::site("public/js/plupload/i18n/ru.js").'"></script>
+            <link href="'.URL::site("public/js/plupload/jquery.plupload.queue/css/jquery.plupload.queue.css").'" rel="stylesheet" type="text/css">';
             $this->template->content = $content;
         }
         else

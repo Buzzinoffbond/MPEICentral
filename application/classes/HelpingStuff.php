@@ -47,7 +47,7 @@ class HelpingStuff
 				  if($day_of_week=='6'){$day_of_week='Суббота';}
           if($format=="fulldate")
           {
-            $humaniseddate= $day_of_week.", <nobr>".$day." ".$monthRod.",</nobr> ".$date['1'];
+            $humaniseddate= $day_of_week.", <span class='nobr'>".$day." ".$monthRod.",</span> ".$date['1'];
           }
           if($format=="datetime")
           {

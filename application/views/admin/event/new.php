@@ -37,31 +37,6 @@ echo $message; ?></h3>
 			<div id="add-inputs-here"></div>
     		<span class="function-link media-poster" id="add-inputs">Добавить медиа-постер</span>		
     		<div class="media-poster-description">Поддерживаются ссылки на:<br>Youtube<br>Vimeo<br>Изображения(png, jpg, gif)</div>
-    		<script>
-    			$("#add-inputs").click(function () {
-    				$('<div class="control-group" style="display: none;"><div class="label"><label for="media">Ссылка:</label></div><input name="media[]" type="text"></div>').hide().appendTo('#add-inputs-here').show('normal');
-				
-				$("#add-inputs-here .control-group input").each(function(index, element){$(element).attr("id", "media"+index);});
-				$("#add-inputs-here .control-group label").each(function(index, element){$(element).attr("for", "media"+index);});
-			});
-    		</script>
-    		<script>
-  				$(function() {
-    			$( "#altdate" ).datepicker({
-    				dateFormat: "DD, d MM, yy",
-    				altField: "#date",
-    				altFormat: "yy-mm-dd" });
-    			$( "#altdate" ).datepicker( $.datepicker.regional[ "ru" ] );
-  				});
-  			</script>
-    		<script>
-				$(document).ready(function(){
-				  $("#title").syncTranslit({
-				    destination: "url_title",
-				    urlSeparator: "_"
-				  });
-				});
-  			</script>
     	</div>
 	</div>
 		<textarea name="content" id="content"></textarea>
@@ -72,6 +47,32 @@ echo $message; ?></h3>
 			removePlugins: 'resize'
 			});
     	</script>
+    	<script>
+    			$("#add-inputs").click(function () {
+    				$('<div class="control-group" style="display: none;"><div class="label"><label for="media">Ссылка:</label></div><input name="media[]" type="text"></div>').hide().appendTo('#add-inputs-here').show('normal');
+				
+				$("#add-inputs-here .control-group input").each(function(index, element){$(element).attr("id", "media"+index);});
+				$("#add-inputs-here .control-group label").each(function(index, element){$(element).attr("for", "media"+index);});
+			});
+    		</script>
+    		<script>
+  				$(function() {
+				$( "#altdate" ).datepicker({
+					dateFormat: "DD, d MM, yy",
+					altField: "#date",
+					altFormat: "yy-mm-dd",
+					minDate: new Date ()});
+				$( "#altdate" ).datepicker( $.datepicker.regional[ "ru" ] );
+  				});
+  			</script>
+    		<script>
+				$(document).ready(function(){
+				  $("#title").syncTranslit({
+				    destination: "url_title",
+				    urlSeparator: "_"
+				  });
+				});
+  			</script>
 		<input name="submit" type="submit" class="right" value="Сохранить">
 	</div>
 	<div class="clear"></div>

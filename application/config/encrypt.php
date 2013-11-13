@@ -10,7 +10,7 @@ return array(
 		 * integer  mode    encryption mode, one of MCRYPT_MODE_*
 		 * integer  cipher  encryption cipher, one of the Mcrpyt cipher constants
 		 */
-		'key'   => '/*key*/',
+		'key'   => '/***KEY***/',
 		'cipher' => MCRYPT_RIJNDAEL_128,
 		'mode'   => MCRYPT_MODE_NOFB,
 	),

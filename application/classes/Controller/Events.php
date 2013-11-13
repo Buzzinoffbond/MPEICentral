@@ -8,7 +8,7 @@ class Controller_Events extends Controller_Common {
         $content = View::factory('events/events')
                 ->bind('events', $events)
                 ->bind('pagination', $pagination);
-        $total_items = Model::factory('Events')->count_all();
+        $total_items = Model::factory('Events')->count_upcoming();
         $pagination = Pagination::factory(array(
             'total_items' => $total_items
             )
@@ -19,7 +19,6 @@ class Controller_Events extends Controller_Common {
         $start=$pagination->offset;
         $nums=$pagination->items_per_page;
         $events = Model::factory('Events')->get_page_by_date($start,$nums);
-        $test=$pagination->offset;
         $this->template->content = $content;
         $this->template->title = 'События';
         $this->template->description = 'События МЭИ';
@@ -27,21 +26,46 @@ class Controller_Events extends Controller_Common {
 
     public function action_event()
     {
-        if($this->request->param())
+        if($this->request->param('id'))
+        {
+            $user_id = Auth::instance()->get_user('id');
+            if ($this->request->post('attend'))
             {
+                
+                Model::factory('Events')->attend($this->request->param('id'),$user_id->id);
+            }
             $id = intval($this->request->param('id'));
- 
             $content = View::factory('events/event')
-                        ->bind('event', $event)
-                        ->bind('comments', $comments)
-                        ->bind('embedmedia',$embedmedia);
- 
+                       ->bind('event', $event)
+                       ->bind('comments', $comments)
+                       ->bind('embedmedia',$embedmedia)
+                       ->bind('attended',$attended)
+                       ->bind('i_will_go',$i_will_go);
             $event = Model::factory('Events')->get_event_by_id($id);
+            if (empty($event))
+            {
+                throw new HTTP_Exception_404('Такого события не существует.');
+            }
             $embedmedia=HelpingStuff::embedmedia($event['media']);
             unset($event['media']);
-            $comments_url = 'comments/events/' . $id;
+            $comments_url = 'comments/events/' . $id;   
+            if ($this->request->post('add_comment'))
+            {
+                try
+                {
+                    Request::factory($comments_url)
+                        ->method(Request::POST)
+                        ->post(array('data' => $this->request->post()))
+                        ->execute();
+                }
+                catch(Exceptions $e)
+                {
+                    //log it
+                }
+            }
             $comments = Request::factory($comments_url)->execute();
-            
+            $i_will_go = Model::factory('Events')->check_events_attend($this->request->param('id'),$user_id->id);
+            $attended = Model::factory('Events')->get_attended($this->request->param('id'));
             $this->template->head    ='
             <link rel="stylesheet" href="'.URL::site("public/js/showcase/css/style.css").'" />
             <script type="text/javascript" src="'.URL::site("public/js/showcase/jquery.aw-showcase.js").'"></script>
@@ -52,6 +76,7 @@ class Controller_Events extends Controller_Common {
                     {
                         fit_to_parent:     true,
                         auto:              false,
+                        transition:        "fade"
                     });
                 });
                 </script>
@@ -127,6 +152,40 @@ class Controller_Events extends Controller_Common {
         $this->template->title = 'Календарь';
         $this->template->description = 'Календарь событий МЭИ';
         $this->template->content = $content;
-    }   
+    }
+
+
+    public function action_propose(){
+        $user = Auth::instance();
+        if ($user->logged_in())
+        {
+            if (HTTP_Request::POST == $this->request->method())
+            {
+                try
+                {
+                    $user_info = Auth::instance()->get_user();
+                    $propose = Model::factory('Events')->propose_an_event(
+                        $this->request->post('title'),
+                        $this->request->post('date'),
+                        $this->request->post('content'),
+                        $user_info->id);
+
+                    $message = TRUE;
+                }
+                catch(Exception $e)
+                {
+                    $message = 'error';
+                }
+            }
+            $content = View::factory('events/propose')
+                ->bind('message',$message);
+            $this->template->head ='<script type="text/javascript" src="'.URL::site("/public/js/autosize-master/jquery.autosize-min.js").'"></script>';
+            $this->template->content = $content;
+        }
+        else
+        {
+            HTTP::redirect('login');
+        }
+    }    
 
 }//end Events

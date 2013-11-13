@@ -9,7 +9,9 @@ class Controller_Community extends Controller_Common {
 					->bind('errors',$errors);
 
 		$shouts=Model::factory('Community')->get_shouts(15);
+
         $this->template->head ='<script type="text/javascript" src="'.URL::site("public/js/autosize-master/jquery.autosize-min.js").'"></script>';
+        $this->template->title = 'Shoutbox';
 		$this->template->content = $content;
 	}
 }

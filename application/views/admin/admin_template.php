@@ -20,9 +20,11 @@
 	<ul class="nav-sections">
 		<li class="nav-color-empty"><a href="<?= URL::site()?>">MPEICentral</a></li>
 		<li class="nav-color-blue"><a href="<?= URL::site('admin/dashboard')?>">Панель управления</a></li>
+
 		<li class="nav-color-pink"><a href="<?= URL::site('admin/event/')?>">События</a>
 			<ul class="nav-sub-section">
 				<li><a href="<?= URL::site('admin/event/new')?>">Добавить событие</a></li>
+				<li><a href="<?= URL::site('admin/event/proposed')?>">Предложенные</a></li>
 			</ul>
 		</li>
 		<li class="nav-color-green"><a href="<?= URL::site('admin/article/')?>">Новости</a>
@@ -36,6 +38,10 @@
 				<li><a href="<?= URL::site('admin/media/addalbum')?>">Добавить альбом</a></li>
 			</ul>
 		</li>
+		<li class="nav-color-deepblue"><a href="<?= URL::site('admin/contest/')?>">Конкурсы</a>
+			<ul class="nav-sub-section">
+				<li><?= HTML::anchor('/admin/contest/new', 'Добавить конкурс');  ?></li>
+			</ul></li>
 		<li class="nav-color-purple"><a href="<?= URL::site('admin/user/')?>">Пользователи</a></li>
 	</ul>
 </div>
